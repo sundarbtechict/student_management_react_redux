@@ -1,13 +1,7 @@
 import { ActionTypes } from "../constants/action-types";
 const initialState = {
-    students : [
-        {
-          name:"teddy",
-          id: "104",
-          mobile: "8220190919",
-          email: "teddy@gmail.com"
-        }
-    ]
+    students : [],
+    student : {}
 };
 
 export const studentReducer = (state=  initialState, {type, payload} )=> {
@@ -19,6 +13,12 @@ export const studentReducer = (state=  initialState, {type, payload} )=> {
             console.log(list);
             return {...state, students:list};
         }
+        case ActionTypes.FETCH_STUDENTS:
+            return { ...state, students: payload };
+        case ActionTypes.FETCH_STUDENT:
+            return { ...state, student: payload };
+        case ActionTypes.REMOVE_FETCHED_STUDENT:
+            return {...state, student:{}}
         case 'default':
             return state;
     }

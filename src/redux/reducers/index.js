@@ -2,6 +2,6 @@ import { combineReducers } from "redux";
 import { studentReducer } from "./studentReducers";
 
 const reducers = combineReducers({
-    students: studentReducer
+    studentData: studentReducer
 });
 export default reducers;

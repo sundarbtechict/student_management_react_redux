@@ -1,19 +1,23 @@
 import React, {useState, useEffect} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchStudent, removeFetchedStudent } from "../redux/actions/studentActions";
 import { useParams, useNavigate } from 'react-router-dom';
 import api from "../api/students";
 
 
-const EditStudent = ({updateStudentHandler})=>{
-    const [student, setStudent]=useState({name:"",id:"",mobile:"",email:""});
+const EditStudent = ()=>{
+    const studentData = useSelector(state=>state.studentData.student);
+    const [student, setStudent] = useState({name:"",id:"",mobile:"",email:""});
+    const dispatch = useDispatch();
     const {id} = useParams();
     const navigate = useNavigate();
     useEffect(()=>{
-        const getStudent = async(id)=>{ 
-            const response  = await api.get(`/students/${id}`);
-            setStudent(response.data);
-        }
-    getStudent(id);    
+        dispatch(fetchStudent(id));
+        return ()=>dispatch(removeFetchedStudent());    // unmounting : clearing part when component this destroyed   
     },[])
+    useEffect(()=>{
+        studentData.name && setStudent(studentData);
+    },[studentData])
     const onSubmit = async(e)=>{
         e.preventDefault();
         if(student.name==="" || student.id==='' ||student.email===""){
@@ -21,11 +25,11 @@ const EditStudent = ({updateStudentHandler})=>{
             return;
         }
         const response =  await api.put(`/students/${id}`, student);
-        console.log(response);
+        console.log(response,"edit");
         if(response.status == 200)
         {
-            alert("Student details updated");
             navigate("/");
+            alert("Student details updated");
         }
         else
             alert(response.statusText)

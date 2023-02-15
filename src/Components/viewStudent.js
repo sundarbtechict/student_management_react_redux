@@ -1,34 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import api from "../api/students";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchStudent, removeFetchedStudent, removeStudent } from '../redux/actions/studentActions';
 
 
 const ViewStudent = ()=>{
-    const [student, setStudent]=useState({});
+    const student = useSelector(state=>state.studentData.student)
     const {id} = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(()=>{
-        const getStudent = async(id)=>{ 
-            const response  = await api.get(`/students/${id}`);
-            setStudent(response.data);
-        }
-    getStudent(id);    
+        dispatch(fetchStudent(id));
+        return ()=>dispatch(removeFetchedStudent());    // unmounting : clearing part when component this destroyed
     },[])
 
-    const deleteStudent =async(id)=>{
-        const response =  await api.delete(`/students/${id}`);
-        console.log(response);
-        if(response.status == 200){
-            alert("Deleted successfully");
-            navigate("/");
-        }
-        else{
-            alert(response.statusText);
-        }
-        
-    }
+    const deleteStudent =async()=>dispatch(removeStudent(id, navigate));
     const goBack = ()=> navigate(-1);
 
     return (

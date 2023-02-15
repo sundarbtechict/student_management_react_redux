@@ -1,28 +1,19 @@
 import React,{useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-import { setStudents, removeStudent } from "../redux/actions/studentActions";
-import api from "../api/students";
+import { removeStudent, fetchStudents } from "../redux/actions/studentActions";
 
 
 const ViewAllStudents = ()=>
 {
     const dispatch = useDispatch();
-    const  fetchStudents = async ()=>{
-        const list = await api.get("/students");
-        console.log(list,"res")
-        dispatch(setStudents(list.data));
-    }
     const students = useSelector(state=>{
-        console.log(state);
-        return state.students.students;
-    })
-    
+        return state.studentData.students;
+    });
     const [studentsManipulated,setStudentsManipulated]=useState(students)
     const [ready,setReady]=useState()
     const [searchTerm,setSearchTerm]=useState('')
     const searchHandler=()=>{
-        
         const result=students.filter((student)=>(student.name.toLowerCase().startsWith(searchTerm.toLowerCase())))
         setStudentsManipulated(result)
     }
@@ -31,7 +22,8 @@ const ViewAllStudents = ()=>
         setSearchTerm('');
     }
     useEffect(()=>{
-        fetchStudents();
+        dispatch(fetchStudents());
+        return ()=>setStudentsManipulated([]);
     },[])
     useEffect(()=>{
         setStudentsManipulated(students)
@@ -58,16 +50,7 @@ const ViewAllStudents = ()=>
         setReady(listOfStudents)
     },[studentsManipulated])
     const deleteStudent =async(id)=>{
-        const response =  await api.delete(`/students/${id}`);
-        console.log(response);
-        if(response.status == 200){
-            dispatch(removeStudent(id));
-            alert("Deleted successfully");
-        }
-        else{
-            alert(response.statusText);
-        }
-        
+        dispatch(removeStudent(id));
     }
     
     return (
