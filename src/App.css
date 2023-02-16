@@ -1,3 +1,15 @@
 .Homepage-block{
   margin: 5% 15%;
 }
+.addStudent .card{
+  width:50%;
+  margin: 0 auto;
+}
+.addStudent label:not(:first-child){
+  margin: 15px 0 5px;
+}
+.addStudent .errorMsg{
+  color: red;
+  margin: 3px 0 0;
+  font-size: 14px;
+}
